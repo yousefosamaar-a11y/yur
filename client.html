@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>طلب جديد</title>
+  <style>
+    body { font-family: Arial; background:#f1f1f1; padding:20px; direction:rtl; }
+    form { background:#fff; padding:20px; border-radius:10px; max-width:500px; margin:auto; box-shadow:0 0 10px rgba(0,0,0,.1); }
+    label { display:block; margin-top:15px; font-weight:bold; }
+    input, button { width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:5px; }
+    button { background:#0b7285; color:#fff; border:none; cursor:pointer; margin-top:20px; }
+    button:hover { background:#096075; }
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center;">تسجيل طلب جديد</h2>
+
+  <form id="orderForm">
+    <label>الاسم الأول *</label>
+    <input type="text" id="firstName" required>
+
+    <label>اسم العائلة *</label>
+    <input type="text" id="lastName" required>
+
+    <label>رقم الهاتف *</label>
+    <input type="tel" id="phone" pattern="[0-9]{11}" required placeholder="01012345678">
+
+    <label>العنوان *</label>
+    <input type="text" id="address" required>
+
+    <label>الصنف *</label>
+    <input type="text" id="product" required placeholder="مثال: موبايل">
+
+    <label>الكمية *</label>
+    <input type="number" id="quantity" min="1" required>
+
+    <label>صورة المنتج (اختياري)</label>
+    <input type="file" id="image" accept="image/*">
+
+    <button type="submit">إرسال الطلب</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("orderForm");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const reader = new FileReader();
+      const file = document.getElementById("image").files[0];
+
+      reader.onloadend = () => {
+        const order = {
+          firstName: document.getElementById("firstName").value,
+          lastName: document.getElementById("lastName").value,
+          phone: document.getElementById("phone").value,
+          address: document.getElementById("address").value,
+          product: document.getElementById("product").value,
+          quantity: document.getElementById("quantity").value,
+          image: file ? reader.result : null
+        };
+
+        let orders = JSON.parse(localStorage.getItem("orders")) || [];
+        orders.push(order);
+        localStorage.setItem("orders", JSON.stringify(orders));
+
+        alert("✅ تم إرسال الطلب بنجاح!");
+        form.reset();
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.onloadend();
+      }
+    });
+  </script>
+</body>
+</html>
